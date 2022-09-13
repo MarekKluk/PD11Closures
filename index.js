@@ -19,12 +19,24 @@ class ElectricBlueprint {}
 class ConstructionBlueprint {}
 class ArchitectBlueprint {}
 
-function createArchitectBlueprint(squareMeters, numberOfRooms, increaseSquareMeters) {
-    let currentSquareMeters = squareMeters;
-    while(currentSquareMeters/numberOfRooms < 10) {
-        currentSquareMeters = increaseSquareMeters();
+function createArchitectBlueprint(squareMeters, numberOfRooms, increaseSquareMeters, increaseNumberOfRooms) {
+    if(numberOfRooms) {
+        let currentSquareMeters = squareMeters;
+        while (currentSquareMeters / numberOfRooms < 10) {
+            currentSquareMeters = increaseSquareMeters();
+        }
+        return {
+            architectBlueprint: new ArchitectBlueprint(),
+        }
+    }
+    function recountTheParameters() {
+        let currentNumberOfRooms = numberOfRooms;
+        while (currentNumberOfRooms < 10/squareMeters) {
+            currentNumberOfRooms = increaseNumberOfRooms();
+        }
     }
     return {
+        recountTheParameters,
         architectBlueprint: new ArchitectBlueprint(),
     }
 }
@@ -39,7 +51,7 @@ function createElectricBlueprint(numberOfFireDetectors, numberOfRooms, increaseN
 }
 function createConstructionBlueprint(squareMeters, numberOfFloors, numberOfPillars, increaseNumberOfPillars) {
     let currentNumberOfPillars = numberOfPillars;
-    while(((squareMeters/numberOfFloors)/currentNumberOfPillars) > 25) {
+    while((squareMeters/numberOfFloors)/currentNumberOfPillars > 25) {
         currentNumberOfPillars = increaseNumberOfPillars();
     }
     return {
@@ -48,35 +60,38 @@ function createConstructionBlueprint(squareMeters, numberOfFloors, numberOfPilla
 }
 
 function createBuildingBlueprint(desiredSquareMeters) {
-    let squareMeters = desiredSquareMeters ?? 200;
     const numberOfFloors = 2;
-    const numberOfRooms = 14;
+    let numberOfRooms = undefined;
+    let squareMeters = desiredSquareMeters ?? 200;
     let numberOfFireDetectors = 40;
     let numberOfPillars = 4;
 
-    function increaseSquareMeters () {
+    function increaseSquareMeters() {
         return squareMeters++;
     }
-    function increaseNumberOfFireDetectors () {
+    function increaseNumberOfFireDetectors() {
         return numberOfFireDetectors++;
     }
     function increaseNumberOfPillars() {
         return numberOfPillars++;
     }
+    function increaseNumberOfRooms() {
+        return numberOfRooms++;
+    }
 
     return {
+        architectBlueprint: createArchitectBlueprint(squareMeters, numberOfRooms, increaseSquareMeters, increaseNumberOfRooms),
+        electricBlueprint: createElectricBlueprint(numberOfFireDetectors, numberOfRooms, increaseNumberOfFireDetectors),
+        constructionBlueprint: createConstructionBlueprint(squareMeters, numberOfFloors, numberOfPillars, increaseNumberOfPillars),
         squareMeters,
         numberOfFloors,
         numberOfRooms,
         numberOfFireDetectors,
         numberOfPillars,
-        electricBlueprint: createElectricBlueprint(numberOfFireDetectors, numberOfRooms, increaseNumberOfFireDetectors),
-        constructionBlueprint: createConstructionBlueprint(squareMeters, numberOfFloors, numberOfPillars, increaseNumberOfPillars),
-        architectBlueprint: createArchitectBlueprint(squareMeters, numberOfRooms, increaseSquareMeters),
     }
 }
 
-const desiredSquareMeters = 120;
+const desiredSquareMeters = 3;
 const blueprint = createBuildingBlueprint(desiredSquareMeters);
 
 const electricBlueprint = blueprint.electricBlueprint;
